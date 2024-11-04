@@ -11,7 +11,7 @@ This is a financial adiviser streamlit app.
 
 - Scrolling down the page, you’ll find additional useful information.
 
-- You can ask questions about the company using the chatbot.
+- You can ask questions about the company using the chatbot (the ticker is automatically added to the prompt, no need to specify the ticker).
 
 - Last but not least, you can generate a complete analysis of the company by clicking the "Generate Analysis Report" button (this may take some  time; when finished, a new button to download the PDF will appear. If you wish to cancel the generation, select a new ticker).
 
