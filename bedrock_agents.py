@@ -6,6 +6,15 @@ import json
 import os
 from dotenv import load_dotenv
 
+
+import yfinance as yf
+import pandas as pd
+
+import requests
+from bs4 import BeautifulSoup
+
+
+
 load_dotenv()
 import uuid
 session_id = str(uuid.uuid4())
@@ -26,13 +35,7 @@ agent_id = os.getenv("AGENT_ID")
 agent_alias = os.getenv("AGENT_ALIAS")
 
 
-runtime_client=boto3.client(
-    service_name="bedrock-agent-runtime",
-    region_name=region_name,
-    aws_access_key_id=access_key,
-    aws_secret_access_key=secret_key,
-    aws_session_token=session_token  # Facultatif
-),
+
 
 
 
@@ -72,14 +75,19 @@ def analyze_sentiment(text):
 
 
 
-
-# Function to call the agent with a user prompt
 def call_agent_with_prompt(user_prompt,agent_alias):
+    runtime_client=boto3.client(
+        service_name="bedrock-agent-runtime",
+        region_name=region_name,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        aws_session_token=session_token  # Facultatif
+    ),
     try:
-        # Invoke the agent without invalid parameters
+        
         response = runtime_client[0].invoke_agent(
             agentId=agent_id,
-            agentAliasId=agent_alias,  # Include this if you have an agent alias
+            agentAliasId=agent_alias,  #agent alias
             sessionId=session_id,
             inputText=user_prompt,
             #enableTrace=True
@@ -87,13 +95,11 @@ def call_agent_with_prompt(user_prompt,agent_alias):
         event_stream = response.get('completion')
         response_text = ''
 
-        # Parcourir l'EventStream pour obtenir la réponse
         for event in event_stream:
-            # Chaque événement est un dictionnaire contenant les données de l'événement
-            # Pour la génération de texte, les données sont sous la clé 'chunk'
+           
             if 'chunk' in event:
                 chunk = event['chunk']
-                # La clé 'bytes' contient le texte généré
+                
                 content = chunk.get('bytes', b'').decode('utf-8')
                 response_text += content
             else:
@@ -105,13 +111,6 @@ def call_agent_with_prompt(user_prompt,agent_alias):
         print("Erreur lors de l'appel à l'agent :", e)
         return None
     
-
-import yfinance as yf
-import pandas as pd
-
-import requests
-from bs4 import BeautifulSoup
-import json
 
 # Fonction pour extraire le texte principal de l'article
 def extract_article_text(url):
@@ -175,9 +174,6 @@ def get_news_with_sentiment(ticker_name):
 
     return sentiment_output
 
-
-
-#sentiment_output = get_news_with_sentiment(ticker)
 
 
 
@@ -255,14 +251,6 @@ def gat_analyse_macro(output_macro):
     response_macro = call_agent_with_prompt(promt,agent_alias)
     
     return output_macro + response_macro
-
-# def get_macro_news(output_macro):
-    
-#     response_macro= gat_analyse_macro(output_macro)
-    
-#     return output_macro + response_macro
-
-
 
 
 
@@ -352,7 +340,6 @@ def risk_anal(ticker_name,output_macro):
 def tot_anal(ticker_name,response_risk,response_profil,response_macro,response_fin,response_sent):
     
     tot_reponse = response_risk + response_profil + response_macro + response_fin + response_sent
-
 
     agent_alias = os.getenv("AGENT_RESUME_ALIAS")
     user_prompt = f"Réalise un récapitulatif et un conseil de stratégie vis à vis de l'entreprise {ticker_name}. Donne un avis de BUY, SELL ou HOLD avec tes informations d'un point de vue d'un analyste financier. Insère `<br/>` pour un retour à la ligne simple et utilise plusieurs `<br/><br/>` pour des sauts de ligne plus importants."

@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 import tempfile
 from io import BytesIO
 
-# Fonction pour récupérer les actualités macroéconomiques
-from macronews import *
+from bedrock_agents import *
 
 
 
@@ -21,7 +20,7 @@ def download_report(selected_ticker):
     buffer.seek(0)
     return buffer
 
-# Fonction pour récupérer les données financières de l'entreprise
+#  données financières de l'entreprise
 def get_company_financials(ticker_symbol):
     ticker = yf.Ticker(ticker_symbol)
     income_statement = ticker.financials  # Compte de résultat
@@ -29,7 +28,6 @@ def get_company_financials(ticker_symbol):
     cashflow_statement = ticker.cashflow  # Flux de trésorerie
     return income_statement, balance_sheet, cashflow_statement
 
-# Convertir un DataFrame en une liste de listes pour ReportLab et formater les nombres
 def df_to_table(dataframe):
     table_data = [dataframe.columns.insert(0, "Date").tolist()]
     for idx, row in dataframe.iterrows():
@@ -42,7 +40,7 @@ def df_to_table(dataframe):
 
 
 
-# Fonction pour générer et sauvegarder un graphique d'inflation
+# graphique d'inflation
 def create_inflation_chart():
     fig, ax = plt.subplots(figsize=(6, 4))
     data = yf.download("^IRX", period="1mo", interval="1d")
@@ -56,7 +54,7 @@ def create_inflation_chart():
     plt.close(fig)
     return temp_file.name
 
-# Fonction pour générer et sauvegarder un graphique du VIX
+# graphique du VIX
 def create_vix_chart():
     fig, ax = plt.subplots(figsize=(6, 4))
     vix_data = yf.download("^VIX", period="1mo", interval="1d")
@@ -71,7 +69,7 @@ def create_vix_chart():
     return temp_file.name
 
 
-# Fonction pour générer un graphique des prix de l'action sur 1 mois
+# graphique des prix de l'action sur 1 mois
 def create_price_chart(ticker_symbol):
     data = yf.download(ticker_symbol, period="1mo", interval="1d")
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -85,7 +83,7 @@ def create_price_chart(ticker_symbol):
     plt.close(fig)
     return temp_file.name
 
-# Récupérer les informations de l'entreprise
+# informations de l'entreprise
 def get_ticker_name(ticker_symbol):
     ticker = yf.Ticker(ticker_symbol)
     info = ticker.info
@@ -100,7 +98,7 @@ def get_ticker_name(ticker_symbol):
     }
     return ticker_name
 
-# Créer l'en-tête et le pied de page institutionnels
+# en-tête et le pied de page institutionnels
 def create_header(company_info):
     def header(canvas, doc):
         
@@ -169,7 +167,7 @@ def create_pdf(filename, ticker_name):
     elements.append(Paragraph(f"<b>Description de l'entreprise:</b> {company_info.get('description')}", normal_style))
     elements.append(Spacer(1, 24))
 
-    # Section Macroéconomique avec Graphiques
+    # Section Macroéconomique 
     elements.append(Paragraph("1. Analyse Macroéconomique", heading_style))
     elements.append(Paragraph("<b>Actualités Macroéconomiques:</b>", normal_style))
     elements.append(Paragraph(macrotext, normal_style))
@@ -217,23 +215,23 @@ def create_pdf(filename, ticker_name):
 
 
 
-    # Ajout de la section 4 : Analyse Sectorielle
+    # section 4 : Analyse Sectorielle
     elements.append(Paragraph("4. Analyse Gouvernance et Composition du Conseil d’Administration", heading_style))
     elements.append(Paragraph(resp_holders_anal, normal_style))
     elements.append(Spacer(1, 12))  # Espacement après la section
 
 
-    # Ajout de la section 5 : Analyse Sectorielle
+    # section 5 : Analyse Sectorielle
     elements.append(Paragraph("5. Actualités et Sentiment de Marché", heading_style))
     elements.append(Paragraph(resp_sentiment_anal, normal_style))
     elements.append(Spacer(1, 12))  # Espacement après la section
 
-    # Ajout de la section 6 : Analyse Sectorielle
+    # section 6 : Analyse Sectorielle
     elements.append(Paragraph("6. Risques et Opportunités", heading_style))
     elements.append(Paragraph(resp_risk_anal, normal_style))
     elements.append(Spacer(1, 12))  # Espacement après la section
 
-    # Ajout de la section 7 : Analyse Sectorielle
+    # section 7 : Analyse Sectorielle
     elements.append(Paragraph("7. Synthèse et Recommandations", heading_style))
     elements.append(Paragraph(resp_tot_anal, normal_style))
     elements.append(Spacer(1, 12))  # Espacement après la section
@@ -250,7 +248,6 @@ def create_pdf(filename, ticker_name):
     )
     normal_style = getSampleStyleSheet()["BodyText"]
 
-    # Texte de conclusion
     conclusion_text = f"""
     <b>Conclusion</b><br/><br/>
     En conclusion, <b>{ticker_name}</b> se positionne comme un acteur significatif dans son secteur d’activité, 
@@ -262,7 +259,7 @@ def create_pdf(filename, ticker_name):
     Ce rapport souligne l’importance de surveiller les indicateurs financiers et macroéconomiques pertinents pour suivre l’évolution de {ticker_name} 
     et saisir les opportunités d’investissement en fonction des changements de l’environnement économique.
     """
-    # Ajouter la conclusion au document
+    # conclusion
     elements.append(Spacer(1, 24))
     elements.append(Spacer(1, 12))
     elements.append(Paragraph(conclusion_text, normal_style))
@@ -274,10 +271,8 @@ def create_pdf(filename, ticker_name):
 
 
 
-#create_pdf("rapport_institutionnel_banque.pdf", ticker_name)
-# Vérification si le script est exécuté directement (pas lors de l'importation)
 if __name__ == "__main__":
-    # Placez ici le code que vous souhaitez exécuter uniquement si vous lancez reportpdf.py directement
+    
     ticker = "RTX"
     ticker_name = get_ticker_name(ticker)
     create_pdf("rapport_institutionnel_banque.pdf", ticker_name)
