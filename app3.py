@@ -74,7 +74,7 @@ with st.sidebar:
             else:
                 st.write("Aucun rapport 8-K trouvé.")
         
-        if st.button("Get report"):
+        if st.button("Générer rapport d'analyse"):
             pdf_buffer = download_report(selected_ticker)
             st.download_button(
                 label="Télécharger le rapport PDF",
