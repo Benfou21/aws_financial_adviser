@@ -196,7 +196,7 @@ with st.sidebar:
                     st.markdown(f"[{label}]({url})", unsafe_allow_html=True)
             else:
                 st.write("Aucun rapport 8-K trouvé.")
-
+        
         if st.button("Get report"):
             pdf_buffer = download_report(selected_ticker)
             st.download_button(
@@ -299,9 +299,6 @@ with st.container():
     for role, message in st.session_state.conversation:
         with st.chat_message(role):
             st.write(message)
-
-
-
 
 
 
