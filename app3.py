@@ -94,10 +94,10 @@ if "conversation" not in st.session_state:
 
 with st.container():
     # Interface utilisateur Streamlit
-    st.title("Chat with AI Agent")
+    st.title("Chat with our economic expert")
 
     # Champ de saisie pour le message utilisateur
-    user_prompt = st.chat_input("Say something")
+    user_prompt = st.chat_input("Ask about the selected compagny")
 
     # Vérifier si un message a été entré
     if user_prompt:
@@ -108,7 +108,8 @@ with st.container():
         with st.chat_message("assistant"):
             st.write("Processing your request...")
             
-        user_prompt += f"Ticker entreprise : {selected_ticker}"
+        user_prompt += f" Compagny Ticker ({selected_ticker})."
+        
         response = call_agent_with_prompt(user_prompt,agent_alias)
         
         # Ajouter la réponse de l'agent à la conversation
