@@ -15,6 +15,7 @@ This is a financial adiviser streamlit app.
 
 - Last but not least, you can generate a complete analysis of the company by clicking the "Generate Analysis Report" button (this may take some  time; when finished, a new button to download the PDF will appear. If you wish to cancel the generation, select a new ticker).
 
+- Look at rapport_AAPL.pdf to see an example of a generated report
 
 ### Access on EC2
 
